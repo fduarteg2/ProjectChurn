@@ -1,1 +1,36 @@
+# ===== Gestionado por DVC (no tocar) =====
 /Telco-Churn.csv
+
+# ===== Entornos virtuales de Python =====
+.venv/
+venv/
+env/
+env-*/
+
+# ===== Cachés y compilados de Python =====
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== Resultados/artefactos generados localmente =====
+plots/
+mlruns/
+mlruns_test/
+*.joblib
+telco_churn_clean.csv
+
+# ===== Archivos sensibles (NUNCA deben subirse) =====
+*.pem
+*.key
+.env
+
+# ===== Sistema operativo =====
+.DS_Store
+Thumbs.db
+
+# ===== Streamlit =====
+.streamlit/secrets.toml
