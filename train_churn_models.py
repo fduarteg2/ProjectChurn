@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 # ============================================================
 # CONFIGURACIÓN — AJUSTA ESTO ANTES DE CORRER
 # ============================================================
-MLFLOW_TRACKING_URI = "http://98.93.41.190:8050"   # <-- reemplaza con tu IP pública
+MLFLOW_TRACKING_URI = "http://3.93.67.170:8050"   # <-- reemplaza con tu IP pública
 EXPERIMENT_NAME = "telco_churn_entrega2"
 DATA_PATH = "Telco-Churn.csv"                          # <-- ajusta la ruta si es necesario
 RANDOM_STATE = 42
