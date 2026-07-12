@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 # ============================================================
 # CONFIGURACIÓN — AJUSTA ESTO ANTES DE CORRER
 # ============================================================
-MLFLOW_TRACKING_URI = "http://3.93.67.170:8050"   # <-- reemplaza con tu IP pública
+MLFLOW_TRACKING_URI = "http://34.224.80.192:8050/"   # <-- reemplaza con tu IP pública
 EXPERIMENT_NAME = "telco_churn_entrega2"
 DATA_PATH = "Telco-Churn.csv"                          # <-- ajusta la ruta si es necesario
 RANDOM_STATE = 42
@@ -194,6 +194,7 @@ def main():
     gb_configs = [
         {"n_estimators": 100, "learning_rate": 0.1, "max_depth": 3},
         {"n_estimators": 200, "learning_rate": 0.05, "max_depth": 3},
+        {"n_estimators": 300, "learning_rate": 0.1, "max_depth": 4}
     ]
     for cfg in gb_configs:
         run_name = f"gb_n{cfg['n_estimators']}_lr{cfg['learning_rate']}"
