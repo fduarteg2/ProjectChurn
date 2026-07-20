@@ -1,17 +1,20 @@
 """
-Tablero de Predicción de Fuga (Churn) - Telco Customer Churn
-Proyecto: Despliegue de Soluciones en la Nube (AWS) - Entrega 2
+Tablero de Prediccion de Fuga (Churn) - Telco Customer Churn
+Proyecto: Despliegue de Soluciones en la Nube (AWS) - Entrega 3
 
-Este tablero consume directamente el modelo entrenado (modelo_churn_final.joblib)
-sin pasar por una API separada (alcance acordado para la Entrega 2).
+A partir de la Entrega 3, el tablero YA NO carga el modelo directamente:
+consume las predicciones y la explicabilidad a traves de la API churn-api
+(POST /api/v1/predict, /api/v1/predict_batch, GET /api/v1/feature-importances),
+configurable mediante las variables de entorno API_URL y API_PORT.
 
 Ejecutar con:
     streamlit run tablero.py
 """
 
-import joblib
+import os
+
 import pandas as pd
-import numpy as np
+import requests
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
@@ -41,13 +44,70 @@ st.markdown(f"""
 </style>
 """, unsafe_allow_html=True)
 
-MODEL_PATH = "modelo_churn_final.joblib"
 DATA_PATH = "telco_churn_clean.csv"
+API_URL = os.environ.get("API_URL", "localhost")
+API_PORT = os.environ.get("API_PORT", "8001")
+API_BASE = f"http://{API_URL}:{API_PORT}/api/v1"
+
+MODEL_FEATURE_COLUMNS = [
+    "gender", "SeniorCitizen", "Partner", "Dependents", "tenure",
+    "PhoneService", "MultipleLines", "InternetService", "OnlineSecurity",
+    "OnlineBackup", "DeviceProtection", "TechSupport", "StreamingTV",
+    "StreamingMovies", "Contract", "PaperlessBilling", "PaymentMethod",
+    "MonthlyCharges", "TotalCharges",
+]
 
 
-@st.cache_resource
-def load_model():
-    return joblib.load(MODEL_PATH)
+def row_to_customer_payload(row: pd.Series) -> dict:
+    """Convierte una fila del dataset al esquema CustomerFeatures esperado por la API."""
+    return {
+        "gender": str(row["gender"]),
+        "SeniorCitizen": int(row["SeniorCitizen"]),
+        "Partner": str(row["Partner"]),
+        "Dependents": str(row["Dependents"]),
+        "tenure": int(row["tenure"]),
+        "PhoneService": str(row["PhoneService"]),
+        "MultipleLines": str(row["MultipleLines"]),
+        "InternetService": str(row["InternetService"]),
+        "OnlineSecurity": str(row["OnlineSecurity"]),
+        "OnlineBackup": str(row["OnlineBackup"]),
+        "DeviceProtection": str(row["DeviceProtection"]),
+        "TechSupport": str(row["TechSupport"]),
+        "StreamingTV": str(row["StreamingTV"]),
+        "StreamingMovies": str(row["StreamingMovies"]),
+        "Contract": str(row["Contract"]),
+        "PaperlessBilling": str(row["PaperlessBilling"]),
+        "PaymentMethod": str(row["PaymentMethod"]),
+        "MonthlyCharges": float(row["MonthlyCharges"]),
+        "TotalCharges": float(row["TotalCharges"]),
+    }
+
+
+def api_predict_one(row: pd.Series) -> float:
+    payload = {"customer": row_to_customer_payload(row)}
+    resp = requests.post(f"{API_BASE}/predict", json=payload, timeout=15)
+    resp.raise_for_status()
+    return resp.json()["churn_probability"]
+
+
+@st.cache_data(show_spinner="Consultando predicciones a la API...")
+def score_sample_via_api(_api_base: str, sample_df: pd.DataFrame) -> pd.DataFrame:
+    customers = [row_to_customer_payload(row) for _, row in sample_df.iterrows()]
+    resp = requests.post(f"{_api_base}/predict_batch", json={"customers": customers}, timeout=60)
+    resp.raise_for_status()
+    probs = [p["churn_probability"] for p in resp.json()["predictions"]]
+    result = sample_df.copy()
+    result["Probabilidad_Fuga"] = probs
+    return result
+
+
+@st.cache_data(show_spinner="Consultando importancia de variables a la API...")
+def get_feature_importances_via_api(_api_base: str) -> pd.Series:
+    resp = requests.get(f"{_api_base}/feature-importances", timeout=30)
+    resp.raise_for_status()
+    data = resp.json()["importances"]
+    s = pd.Series({d["feature"]: d["importance"] for d in data})
+    return s.sort_values(ascending=False)
 
 
 @st.cache_data
@@ -56,50 +116,23 @@ def load_data():
     return df
 
 
-@st.cache_data
-def score_all_customers(_model, df):
-    """Calcula la probabilidad de fuga para todos los clientes (para la Matriz de Priorización)."""
-    X = df.drop(columns=["Churn", "customerID"])
-    proba = _model.predict_proba(X)[:, 1]
-    result = df.copy()
-    result["Probabilidad_Fuga"] = proba
-    return result
-
-
-def get_feature_importances(model):
-    """Agrega las importancias del Random Forest por variable de negocio original
-    (no por categoría individual del one-hot encoding)."""
-    pre = model.named_steps["preprocessor"]
-    clf = model.named_steps["classifier"]
-
-    num_features = pre.transformers_[0][2]
-    cat_features = pre.transformers_[1][2]
-    onehot = pre.transformers_[1][1].named_steps["onehot"]
-
-    importances = clf.feature_importances_
-    idx = 0
-    agg = {}
-    for f in num_features:
-        agg[f] = importances[idx]
-        idx += 1
-    for f, cats in zip(cat_features, onehot.categories_):
-        n = len(cats)
-        agg[f] = importances[idx:idx + n].sum()
-        idx += n
-
-    s = pd.Series(agg).sort_values(ascending=False)
-    return s
-
-
-model = load_model()
 df = load_data()
-scored_df = score_all_customers(model, df)
 
 st.title("📊 Panel de Retención de Clientes — TelcoChurn")
 st.caption(
     "MVP de predicción de fuga (Churn) para priorizar acciones de retención. "
-    "Entrega 2 — Despliegue de Soluciones en la Nube."
+    "Entrega 3 — Tablero + API desplegados en contenedores Docker."
 )
+
+try:
+    health = requests.get(f"{API_BASE}/health", timeout=5)
+    health.raise_for_status()
+except requests.exceptions.RequestException as exc:
+    st.error(
+        f"No se pudo conectar con la API de predicción en `{API_BASE}`. "
+        f"Verifica que el contenedor churn-api esté corriendo. Detalle: {exc}"
+    )
+    st.stop()
 
 tab1, tab2, tab3 = st.tabs([
     "🎯 Simulador de Escenarios",
@@ -114,7 +147,7 @@ with tab1:
     st.subheader("Simulador de Escenarios")
     st.write(
         "Selecciona un cliente base y ajusta variables clave del negocio "
-        "para ver cómo cambia su probabilidad de fuga en tiempo real."
+        "para ver cómo cambia su probabilidad de fuga en tiempo real (calculada por la API)."
     )
 
     col_select, col_result = st.columns([1.3, 1])
@@ -158,11 +191,8 @@ with tab1:
         sim_row["InternetService"] = internet_service
         sim_row["PaymentMethod"] = payment_method
 
-        X_sim = pd.DataFrame([sim_row.drop(["Churn", "customerID"])])
-        proba_sim = model.predict_proba(X_sim)[0, 1]
-
-        X_base = pd.DataFrame([base_row.drop(["Churn", "customerID"])])
-        proba_base = model.predict_proba(X_base)[0, 1]
+        proba_sim = api_predict_one(sim_row)
+        proba_base = api_predict_one(base_row)
 
     with col_result:
         risk_color = COLOR_CORAL if proba_sim >= 0.5 else COLOR_NAVY
@@ -195,9 +225,12 @@ with tab1:
 with tab2:
     st.subheader("Matriz de Priorización (Riesgo vs. Valor)")
     st.write(
-        "Cruce entre la probabilidad de fuga predicha y la facturación mensual (MRR), "
+        "Cruce entre la probabilidad de fuga predicha (vía API) y la facturación mensual (MRR), "
         "para identificar cuentas de **Zona Crítica** (alto riesgo + alto valor)."
     )
+
+    sample_df = df.sample(min(1500, len(df)), random_state=42)
+    scored_df = score_sample_via_api(API_BASE, sample_df)
 
     threshold_risk = st.slider("Umbral de Alto Riesgo (probabilidad)", 0.0, 1.0, 0.5, 0.05)
     threshold_value = st.slider(
@@ -207,8 +240,6 @@ with tab2:
         float(scored_df["MonthlyCharges"].median()),
         5.0,
     )
-
-    plot_df = scored_df.sample(min(1500, len(scored_df)), random_state=42)  # muestra para rendimiento visual
 
     def quadrant(row):
         alto_riesgo = row["Probabilidad_Fuga"] >= threshold_risk
@@ -222,7 +253,7 @@ with tab2:
         else:
             return "Bajo Riesgo, Bajo Valor"
 
-    plot_df = plot_df.copy()
+    plot_df = scored_df.copy()
     plot_df["Cuadrante"] = plot_df.apply(quadrant, axis=1)
 
     color_map = {
@@ -257,10 +288,10 @@ with tab3:
     st.subheader("Factores de Influencia del Modelo")
     st.write(
         "Importancia relativa de cada variable de negocio en la predicción del modelo "
-        "Random Forest (agregada por variable original, no por categoría)."
+        "Random Forest (agregada por variable original, no por categoría). Obtenida vía API."
     )
 
-    importances = get_feature_importances(model)
+    importances = get_feature_importances_via_api(API_BASE)
     top_n = st.slider("Número de variables a mostrar", 5, 15, 8)
     top_importances = importances.head(top_n).sort_values(ascending=True)
 
@@ -279,6 +310,7 @@ with tab3:
 
     st.caption(
         "Nota: esta es la importancia nativa del Random Forest (Gini importance), "
-        "no un análisis SHAP. Es coherente con los hallazgos del EDA de la Entrega 1: "
+        "calculada por churn-api y expuesta en GET /api/v1/feature-importances. "
+        "Es coherente con los hallazgos del EDA de la Entrega 1: "
         "Contrato, antigüedad (tenure) y facturación son los factores más determinantes."
     )

@@ -1,0 +1,26 @@
+services:
+  churn-api:
+    build:
+      context: .
+      dockerfile: churn-api/Dockerfile
+    container_name: churn-api
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+    restart: unless-stopped
+
+  churn-tablero:
+    build:
+      context: .
+      dockerfile: churn-tablero/Dockerfile
+    container_name: churn-tablero
+    ports:
+      - "8501:8501"
+    environment:
+      - PORT=8501
+      - API_URL=churn-api
+      - API_PORT=8001
+    depends_on:
+      - churn-api
+    restart: unless-stopped
