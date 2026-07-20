@@ -31,7 +31,7 @@ title: "TelcoChurn — Entrega Final"
 
 **Experimentación con MLflow.** Se entrenaron 3 familias de modelos con distintas variaciones de hiperparámetros (9 corridas en total), cada una registrada como un *run* en MLflow con sus parámetros, métricas (accuracy, precision, recall, F1, ROC AUC), matriz de confusión y el modelo serializado como artefacto: Regresión Logística (`class_weight=balanced`, C ∈ {0.01, 0.1, 1, 10}), Random Forest (`class_weight=balanced`, 3 combinaciones de `n_estimators`/`max_depth`) y Gradient Boosting (2 combinaciones de `n_estimators`/`learning_rate`/`max_depth`).
 
-![Comparación de F1-score de los 9 experimentos registrados en MLflow](pantallazos/e2_fig1_f1_comparacion.png)
+![Comparación de F1-score de los 9 experimentos registrados en MLflow](pantallazos/e2_fig1_f1_comparacion.png){width=4.3in}
 
 **Modelo seleccionado: `rf_n400_d10`** (Random Forest, 400 árboles, profundidad máxima 10, `class_weight=balanced`). Ofrece el mejor F1 (0.622) con el mejor equilibrio precision/recall del conjunto (precision 0.548, recall 0.719), y un ROC AUC competitivo (0.840), evitando el sobreajuste que exhibe la variante sin límite de profundidad (recall 0.468). Este modelo se re-entrena sobre el 100% de los datos (`train_final_model.py`) y se empaqueta como `modelo_churn_final.joblib`, artefacto que ahora consume **exclusivamente `churn-api`** (el tablero ya no lo carga).
 
@@ -62,15 +62,15 @@ El tablero (`churn-tablero`, Streamlit) ofrece 3 vistas orientadas a la toma de 
 
 **Simulador de Escenarios** — permite seleccionar un cliente base y modificar variables de negocio (contrato, soporte técnico, servicio de internet, método de pago) para observar el cambio en la probabilidad de fuga, calculada por `POST /api/v1/predict`.
 
-![Simulador de Escenarios — desplegado en http://3.90.218.62:8501](pantallazos/03_tablero_simulador.png)
+![Simulador de Escenarios — desplegado en http://3.90.218.62:8501](pantallazos/03_tablero_simulador.png){width=3.4in}
 
 **Matriz de Priorización** — cruza la probabilidad de fuga (obtenida vía `POST /api/v1/predict_batch` sobre una muestra de clientes) contra la facturación mensual, para identificar la "Zona Crítica" (alto riesgo + alto valor).
 
-![Matriz de Priorización — 395 clientes en Zona Crítica sobre la muestra desplegada](pantallazos/04_tablero_matriz_priorizacion.png)
+![Matriz de Priorización — 395 clientes en Zona Crítica sobre la muestra desplegada](pantallazos/04_tablero_matriz_priorizacion.png){width=3.4in}
 
 **Factores de Influencia** — importancia relativa de cada variable de negocio (Gini importance del Random Forest), obtenida vía `GET /api/v1/feature-importances`.
 
-![Factores de Influencia — Contract, tenure y TotalCharges como principales factores](pantallazos/05_tablero_factores_influencia.png)
+![Factores de Influencia — Contract, tenure y TotalCharges como principales factores](pantallazos/05_tablero_factores_influencia.png){width=3.4in}
 
 ## 6. Despliegue en la nube (IaaS — AWS EC2 + Docker)
 
@@ -78,9 +78,8 @@ La solución se desplegó en una instancia AWS EC2 dedicada (`churn-app-server`,
 
 **API en ejecución — documentación interactiva (Swagger UI) en `http://3.90.218.62:8001/docs`:**
 
-![POST /api/v1/predict — request body con el esquema del cliente](pantallazos/01_api_swagger_predict_request.png)
-
-![Respuesta 200 de la API — churn_probability y risk_label, URL de despliegue visible](pantallazos/02_api_swagger_predict_response.png)
+![POST /api/v1/predict — request body con el esquema del cliente](pantallazos/01_api_swagger_predict_request.png){width=3.1in}
+![Respuesta 200 de la API — churn_probability y risk_label, URL de despliegue visible](pantallazos/02_api_swagger_predict_response.png){width=3.1in}
 
 Las capturas de la sección 5 (Simulador, Matriz, Factores) corresponden al tablero consumiendo esta misma API desplegada, ambas accesibles públicamente en las URLs indicadas, confirmando que el usuario puede interactuar con el modelo y explorar las visualizaciones desde la nube.
 
@@ -124,15 +123,11 @@ La rúbrica exige evidencia individual del uso del repositorio por cada integran
 
 El servidor de MLflow se desplegó en una instancia AWS EC2 (IP pública 3.93.67.170, usuario `ubuntu`), donde se registraron las 9 corridas del experimento `telco_churn_entrega2`. Tras capturar la evidencia, el servicio de MLflow fue detenido; la instancia se mantiene activa sin terminar, conforme lo solicita el enunciado.
 
-![Consola AWS EC2 — instancia mlflow-churn-server, IP pública 3.93.67.170, usuario voclabs/user5140187=Ferney_Duarte](pantallazos/e2_fig5_ec2_consola.png)
+![Consola AWS EC2 — instancia mlflow-churn-server, IP pública 3.93.67.170, usuario voclabs/user5140187=Ferney_Duarte](pantallazos/e2_fig5_ec2_consola.png){width=3.1in}
+![Terminal SSH — usuario ubuntu, host ip-172-31-31-31, IP pública 3.93.67.170](pantallazos/e2_fig6_terminal_ssh.png){width=3.1in}
 
-![Terminal SSH — usuario ubuntu, host ip-172-31-31-31, IP pública 3.93.67.170](pantallazos/e2_fig6_terminal_ssh.png)
-
-![UI de MLflow — listado de las 9 corridas del experimento telco_churn_entrega2](pantallazos/e2_fig7_mlflow_ui.png)
-
-![Comparación de métricas entre corridas (parallel coordinates plot)](pantallazos/e2_fig8_parallel_coords.png)
-
-![Detalle de parámetros y métricas de las corridas comparadas](pantallazos/e2_fig9_detalle_metricas.png)
+![UI de MLflow — listado de las 9 corridas del experimento telco_churn_entrega2](pantallazos/e2_fig7_mlflow_ui.png){width=3.1in}
+![Comparación de métricas entre corridas (parallel coordinates plot)](pantallazos/e2_fig8_parallel_coords.png){width=3.1in}
 
 ## 9. Principales resultados y conclusiones
 
