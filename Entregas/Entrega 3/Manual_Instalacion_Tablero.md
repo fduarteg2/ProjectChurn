@@ -85,6 +85,14 @@ Ambos servicios deben aparecer con estado `Up`. Luego, desde un navegador:
 - API (documentación interactiva): `http://<IP_DE_LA_MAQUINA>:8001/docs`
 - Tablero: `http://<IP_DE_LA_MAQUINA>:8501`
 
+Si la API responde correctamente, en `/docs` debe verse el Swagger UI con los endpoints disponibles, y al probar `POST /api/v1/predict` debe recibir una respuesta `200` con `churn_probability` y `risk_label`:
+
+![Instalación verificada — API respondiendo en http://3.90.218.62:8001/api/v1/predict](pantallazos/02_api_swagger_predict_response.png)
+
+Y el tablero debe cargar sus 3 pestañas sin mensajes de error de conexión:
+
+![Instalación verificada — tablero cargado en http://3.90.218.62:8501](pantallazos/03_tablero_simulador.png)
+
 ## 7. Apertura de puertos (si se despliega en AWS EC2)
 
 En el Security Group de la instancia EC2, habilite reglas de entrada (Inbound rules) para:

@@ -100,6 +100,14 @@ Las capturas de la sección 5 (Simulador, Matriz, Factores) corresponden al tabl
 | ebd1d13 | 2026-07-06 | Ferney Duarte | Agrega tablero interactivo (Streamlit) |
 | 53fd02c / f480e44 | 2026-06-24 | Ferney Duarte | Ingesta de datos y configuración inicial de DVC |
 | 25fa065 | 2026-06-24 | Ferney Duarte | EDA Project v1 (Entrega 1) |
+| *(pendiente)* | *(pendiente)* | Andrés Rueda | Agrega endpoint `/api/v1/model-info` con metadatos del modelo |
+| *(pendiente)* | *(pendiente)* | Andrés Rueda | Documenta la arquitectura API + tablero en el README |
+
+### 7.1 Evidencia de aportes individuales en GitHub (Entrega 3)
+
+La rúbrica exige evidencia individual del uso del repositorio por cada integrante del equipo. Los commits de Ferney Duarte para esta entrega se listan arriba (`0b4aaac`, `a7f21a9`). Los de Andrés Rueda quedan registrados con los dos commits señalados como *(pendiente)* en la tabla anterior.
+
+> **ESPACIO PARA CAPTURA — Andrés Rueda.** Pegar aquí el pantallazo de `git log --oneline -5` o de `https://github.com/fduarteg2/ProjectChurn/commits/main` mostrando los 2 commits de la Entrega 3 a su nombre (guía enviada en `Guia_Andres_Entrega3.zip`). Al recibir la captura, actualizar también los hashes de commit en la tabla de la sección 7.
 
 **DVC:** `Telco-Churn.csv` versionado y sincronizado en remoto S3 (`s3://projectchurn-dvc-fduarteg2`). Los artefactos generados (`modelo_churn_final.joblib`, `telco_churn_clean.csv`) se regeneran on-demand a partir del dataset versionado (ver Manual de Instalación), manteniendo el repositorio liviano y reproducible.
 

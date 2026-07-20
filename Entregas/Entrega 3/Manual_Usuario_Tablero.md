@@ -39,6 +39,8 @@ Permite explorar cómo cambia la probabilidad de fuga (churn) de un cliente si s
    - El **cambio (delta)** respecto a la probabilidad del perfil original del cliente.
    - Una tabla con el **perfil simulado** completo.
 
+![Simulador de Escenarios en uso — cliente en Month-to-month, sin soporte técnico: 62% de probabilidad de fuga (ALTO RIESGO)](pantallazos/03_tablero_simulador.png)
+
 **Uso recomendado:** un Account Manager puede usar esta vista para evaluar, antes de contactar a un cliente, qué acción de retención (p. ej. ofrecer un contrato anual, o soporte técnico) tendría mayor impacto en reducir su riesgo de fuga.
 
 ## 4. Matriz de Priorización
@@ -60,6 +62,8 @@ Cruza la **probabilidad de fuga** (eje X) contra la **facturación mensual** (ej
 - Debajo del gráfico se muestra el conteo de clientes en Zona Crítica sobre la muestra visualizada.
 - Puede pasar el cursor sobre cualquier punto para ver el `customerID`, tipo de contrato y antigüedad (tenure) de ese cliente.
 
+![Matriz de Priorización en uso — 395 clientes en Zona Crítica sobre la muestra desplegada](pantallazos/04_tablero_matriz_priorizacion.png)
+
 **Uso recomendado:** el equipo de gestión de cuentas revisa primero los clientes en Zona Crítica antes de continuar con el resto.
 
 ## 5. Factores de Influencia
@@ -71,6 +75,8 @@ Muestra qué variables de negocio tienen mayor peso en las predicciones del mode
 - **Número de variables a mostrar**: ajusta cuántas barras se listan (entre 5 y 15).
 
 **Interpretación:** las variables con barras más largas son las que más influyen en que el modelo prediga fuga. Esto ayuda al equipo comercial a entender *por qué* un cliente está en riesgo, no solo *que* lo está.
+
+![Factores de Influencia en uso — Contract, tenure y TotalCharges como principales factores](pantallazos/05_tablero_factores_influencia.png)
 
 ## 6. Preguntas frecuentes
 
