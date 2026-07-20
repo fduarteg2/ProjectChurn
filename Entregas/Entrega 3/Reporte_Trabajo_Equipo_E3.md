@@ -13,7 +13,9 @@
 | Documentación | Manual de Usuario del Tablero, Manual de Instalación, Reporte de la Entrega 3 | Ferney Duarte | Este documento y anexos |
 | Organización del repositorio | Reorganización de la carpeta `Entregas` por entrega | Ferney Duarte | Commit `a7f21a9` |
 | Modelado (base reutilizada) | Pipeline de entrenamiento y comparación de modelos (Entrega 2, reutilizado sin cambios en esta entrega) | Andrés Rueda | Commits `d044ef3`, `6dd5cd6` |
+| **API — endpoint de metadatos** | *(Pendiente de ejecutar: agrega `GET /api/v1/model-info` a `churn-api` con los hiperparámetros del modelo, según guía enviada)* | Andrés Rueda | *(pendiente — ver `Guia_Andres_Entrega3.zip`)* |
+| **Documentación de arquitectura** | *(Pendiente de ejecutar: agrega la sección "Arquitectura (Entrega 3)" al `README.md` describiendo `churn-api` + `churn-tablero`)* | Andrés Rueda | *(pendiente — ver `Guia_Andres_Entrega3.zip`)* |
 | **Revisión y retroalimentación** | *(Completar: revisión del reporte final, participación en la sesión de retroalimentación a otro grupo — punto obligatorio de la rúbrica, 5 pts)* | Andrés Rueda | *(pendiente)* |
 | **Presentación** | *(Completar: rol de cada integrante en la preparación/exposición de la presentación final de 10 min)* | Ambos | *(pendiente)* |
 
-> **Nota para completar antes de entregar:** las dos filas en negrita deben llenarse coordinando con Andrés — en particular, la retroalimentación a otro grupo debe darla **cada integrante** del equipo por separado (rúbrica: 5 pts si ambos participan, penalización si solo uno lo hace).
+> **Nota para completar antes de entregar:** las cuatro filas en negrita deben llenarse coordinando con Andrés. Las dos primeras se resuelven siguiendo `Guia_Andres_Entrega3.zip` (dos commits puntuales, no tediosos) — al recibir su captura de commits, reemplazar el hash en estas filas y en la tabla de commits del reporte principal (sección 7). La retroalimentación a otro grupo debe darla **cada integrante** del equipo por separado (rúbrica: 5 pts si ambos participan, penalización si solo uno lo hace).
