@@ -75,3 +75,20 @@ def feature_importances() -> list[dict]:
 
     ordered = sorted(agg.items(), key=lambda kv: kv[1], reverse=True)
     return [{"feature": f, "importance": v} for f, v in ordered]
+
+
+MODEL_TYPE = "RandomForestClassifier"
+N_ESTIMATORS = 400
+MAX_DEPTH = 10
+CLASS_WEIGHT = "balanced"
+
+
+def model_info() -> dict:
+    """Metadatos del modelo empaquetado (hiperparametros ganadores, Entrega 2 - MLflow)."""
+    return {
+        "model_type": MODEL_TYPE,
+        "n_estimators": N_ESTIMATORS,
+        "max_depth": MAX_DEPTH,
+        "class_weight": CLASS_WEIGHT,
+        "selected_in": "Entrega 2 (MLflow, run rf_n400_d10)",
+    }

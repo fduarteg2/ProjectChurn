@@ -36,3 +36,8 @@ def predict_batch(request: PredictBatchRequest) -> PredictBatchResponse:
 def get_feature_importances() -> FeatureImportancesResponse:
     importances = model.feature_importances()
     return FeatureImportancesResponse(importances=importances)
+
+
+@api_router.get("/model-info")
+def get_model_info() -> dict:
+    return model.model_info()
